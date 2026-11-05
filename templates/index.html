@@ -165,17 +165,20 @@
                 <option value="기타">인천 · 해외</option>
               </select>
             </label>
-            <label class="mini-field">
-              <span>노선</span>
-              <select name="route"><option value="국제">국제선</option><option value="국내">국내선</option></select>
-            </label>
-            <label class="mini-field">
-              <span>출발 날짜 · 시간</span>
-              <div class="date-time">
+            <div class="risk-row3">
+              <label class="mini-field">
+                <span>노선</span>
+                <select name="route"><option value="국제">국제선</option><option value="국내">국내선</option></select>
+              </label>
+              <label class="mini-field">
+                <span>출발 날짜</span>
                 <input type="date" name="date">
+              </label>
+              <label class="mini-field">
+                <span>출발 시간</span>
                 <input type="time" name="time" value="19:00">
-              </div>
-            </label>
+              </label>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary btn-lg btn-block">지연 위험 확인하기</button>
         </form>

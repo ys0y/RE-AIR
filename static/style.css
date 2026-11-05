@@ -591,4 +591,6 @@ input[type="date"]:focus { outline: none; border-color: var(--primary); backgrou
 }
 
 .data-insight { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); color: #1d4f9c; font-size: 15px; font-weight: 600; }
-.date-time input { min-width: 0; padding-left: 10px; padding-right: 8px; font-size: 15px; }
+.risk-row3 { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 14px; }
+.risk-row3 input, .risk-row3 select { min-width: 0; }
+@media (max-width: 680px) { .risk-row3 { grid-template-columns: 1fr; } }
