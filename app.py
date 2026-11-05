@@ -3,6 +3,7 @@ RE:AIR - Flask 서버
 항공편이 멈춰도, 당신의 여행은 멈추지 않도록.
 """
 import os
+import re
 import threading
 import time
 from collections import defaultdict, deque
@@ -16,6 +17,7 @@ load_dotenv()
 
 import ai_client  # noqa: E402  생성형 AI 연결 모듈
 import prompts    # noqa: E402  AI 지시문
+import flight_stats  # noqa: E402  항공 지연 공공데이터 분석
 
 app = Flask(__name__)
 
@@ -148,6 +150,7 @@ def normalize_analysis(data, priority):
         ][:4],
         "urgent": {"title": _text(urgent.get("title")), "reason": _text(urgent.get("reason"))},
         "check_first": _text_list(analysis.get("check_first"), 5),
+        "data_insight": _text(analysis.get("data_insight"))[:120],
     }
 
     clean_strategies = []
@@ -257,7 +260,7 @@ def run_ai_json(system_prompt, user_prompt, normalize, max_tokens):
 @app.route("/")
 def index():
     """메인 화면을 보여 줍니다."""
-    return render_template("index.html")
+    return render_template("index.html", airports=flight_stats.AIRPORT_NAMES)
 
 
 @app.route("/sw.js")
@@ -311,9 +314,14 @@ def analyze():
     # 생성형 AI로 상황 분석 + 복구 전략 3가지 생성
     started = time.time()
     try:
+        # 항공 문제면 실제 공공데이터 통계를 AI에게 함께 전달 (데이터 기반 분석)
+        data_ctx = flight_stats.data_context(trip)
+        user_prompt = prompts.build_analyze_prompt(trip)
+        if data_ctx:
+            user_prompt += f"\n\n<data>\n{data_ctx}\n</data>"
         result = run_ai_json(
             prompts.ANALYZE_SYSTEM,
-            prompts.build_analyze_prompt(trip),
+            user_prompt,
             normalize=lambda data: normalize_analysis(data, trip["priority"]),
             max_tokens=3000,  # 토큰 한도 고정 - 대신 프롬프트에서 글자 수를 제한
         )
@@ -323,7 +331,7 @@ def analyze():
 
     seconds = round(time.time() - started, 1)
     print(f"[AI 분석 완료] {seconds}초", flush=True)
-    return jsonify({"ok": True, "input": trip, "seconds": seconds, **result})
+    return jsonify({"ok": True, "input": trip, "seconds": seconds, "data_used": bool(data_ctx), **result})
 
 
 @app.post("/api/plan")
@@ -354,6 +362,22 @@ def plan():
     seconds = round(time.time() - started, 1)
     print(f"[AI 계획 완료] {strategy['id']}안 · {seconds}초", flush=True)
     return jsonify({"ok": True, "seconds": seconds, **result})
+
+
+@app.post("/api/risk")
+def risk():
+    """출발 전 지연 위험 체크 (공공데이터 분석, AI 호출 없음)"""
+    data = request.get_json(silent=True) or {}
+    airport = str(data.get("airport") or "").strip()[:20]
+    route = "국내" if data.get("route") == "국내" else "국제"
+    time_text = str(data.get("time") or "")
+    date_text = str(data.get("date") or "")
+    if not re.fullmatch(r"\d{2}:\d{2}", time_text):
+        return jsonify({"ok": False, "error": "출발 시간을 입력해 주세요."}), 400
+    hour = int(time_text[:2])
+    month = int(date_text[5:7]) if re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_text) else int(time.strftime("%m"))
+    result = flight_stats.risk_check(airport, route, hour, month, str(data.get("flight") or "")[:10])
+    return jsonify({"ok": True, "hour": hour, "month": month, **result})
 
 
 if __name__ == "__main__":

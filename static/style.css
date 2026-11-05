@@ -545,3 +545,50 @@ body:not([data-view="landing"]) .header .install-btn { margin-left: auto; }
 /* 앱 화면의 '새로 입력' 버튼은 항상 오른쪽 끝 */
 .header .app-only { margin-left: auto !important; }
 .header .install-btn:not([hidden]) + .landing-only + .app-only { margin-left: 0 !important; }
+
+/* =========================================================
+   출발 전 지연 위험 체크 (깔끔한 버전)
+   ========================================================= */
+.risk-link { display: inline-block; margin-top: 18px; padding: 0; border: 0; background: none; color: var(--g600); font-size: 15px; }
+.risk-link b { color: var(--primary); }
+.risk-link:hover b { text-decoration: underline; }
+.data-badge { margin-left: 6px; }
+
+.risk-form { display: flex; flex-direction: column; gap: 20px; }
+.risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 14px; }
+.mini-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.mini-field > span { font-size: 14px; font-weight: 700; color: var(--g700); }
+.mini-field .optional { font-size: 12px; }
+.date-time { display: grid; grid-template-columns: 1.25fr 1fr; gap: 6px; }
+input[type="date"] { width: 100%; font: inherit; font-size: 16px; color: var(--g900); padding: 15px 12px; border: 2px solid transparent; border-radius: 14px; background: var(--g100); }
+input[type="date"]:focus { outline: none; border-color: var(--primary); background: #fff; }
+
+.risk-result { margin-top: 12px; display: flex; flex-direction: column; gap: 18px; }
+.risk-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.risk-head small { color: var(--g500); font-size: 14px; font-weight: 600; }
+.risk-head h3 { font-size: 26px; margin-top: 2px; }
+.risk-head h3 span { font-size: 16px; color: var(--g500); font-weight: 600; margin-left: 4px; }
+.risk-verdict { text-align: center; padding: 10px 18px; border-radius: 16px; }
+.risk-verdict small { display: block; font-size: 12px; font-weight: 700; opacity: .8; }
+.risk-verdict b { font-size: 22px; }
+.risk-note { font-size: 14px; color: #a15c00; background: var(--amber-soft); padding: 8px 12px; border-radius: 10px; }
+
+.risk-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.risk-tile { padding: 16px; border-radius: 16px; background: var(--g50); border-top: 4px solid var(--g200); }
+.risk-tile.level-low { border-top-color: var(--green); background: #f3fcf8; color: inherit; }
+.risk-tile.level-mid { border-top-color: var(--amber); background: #fffaf0; color: inherit; }
+.risk-tile.level-high { border-top-color: var(--red); background: #fff6f6; color: inherit; }
+.risk-tile small { display: block; font-size: 13px; color: var(--g600); font-weight: 600; }
+.risk-tile b { display: block; font-size: 26px; margin: 4px 0 2px; color: var(--g900); }
+.risk-tile span { font-size: 12px; color: var(--g500); }
+
+.risk-tips { display: flex; flex-direction: column; gap: 8px; }
+.risk-tips li { position: relative; padding-left: 22px; color: var(--g700); font-size: 15px; }
+.risk-tips li::before { content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: 800; }
+.risk-source { font-size: 12px; color: var(--g400); text-align: center; margin-top: -6px; }
+@media (max-width: 680px) {
+  .risk-grid, .risk-tiles { grid-template-columns: 1fr; }
+}
+
+.data-insight { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: var(--sky-soft); color: #1d4f9c; font-size: 15px; font-weight: 600; }
+.date-time input { min-width: 0; padding-left: 10px; padding-right: 8px; font-size: 15px; }

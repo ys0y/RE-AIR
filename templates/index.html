@@ -66,6 +66,7 @@
               <button class="btn btn-primary btn-lg" data-action="start">내 여행 복구하기</button>
               <button class="btn btn-secondary btn-lg" data-action="demo-start">예시로 체험하기</button>
             </div>
+            <button class="risk-link" data-action="risk">✈️ 출발 전이라면? <b>내 비행기 지연 위험 확인하기 →</b></button>
           </div>
 
           <!-- 오른쪽 미리보기 카드 (장식용) -->
@@ -141,6 +142,46 @@
           <small>AI 안내는 참고용이에요. 실제 운항 · 예약 · 운영 정보는 직접 확인해 주세요.</small>
         </div>
       </footer>
+    </section>
+
+    <!-- ===================== 출발 전 지연 위험 체크 (공공데이터) ===================== -->
+    <section class="view" id="view-risk">
+      <div class="container narrow page">
+        <div class="page-head">
+          <h2>내 비행기, 지연 위험은?</h2>
+          <p>같은 공항 · 같은 시간대 · 같은 달의 과거 운항 데이터로 분석해요.</p>
+        </div>
+
+        <form id="risk-form" class="card risk-form" novalidate>
+          <div class="risk-grid">
+            <label class="mini-field">
+              <span>편명 <small class="optional">선택</small></span>
+              <input type="text" name="flight" maxlength="10" placeholder="KE1234">
+            </label>
+            <label class="mini-field">
+              <span>출발 공항</span>
+              <select name="airport">
+                {% for name in airports %}<option value="{{ name }}">{{ name }}</option>{% endfor %}
+                <option value="기타">인천 · 해외</option>
+              </select>
+            </label>
+            <label class="mini-field">
+              <span>노선</span>
+              <select name="route"><option value="국제">국제선</option><option value="국내">국내선</option></select>
+            </label>
+            <label class="mini-field">
+              <span>출발 날짜 · 시간</span>
+              <div class="date-time">
+                <input type="date" name="date">
+                <input type="time" name="time" value="19:00">
+              </div>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">지연 위험 확인하기</button>
+        </form>
+
+        <div class="card risk-result" id="risk-result" hidden></div>
+      </div>
     </section>
 
     <!-- ===================== 화면 2: 상황 입력 ===================== -->
@@ -235,6 +276,7 @@
 
         <div class="page-head left">
           <span class="ai-badge" data-ai-badge="result" hidden></span>
+          <span class="ai-badge data-badge" id="data-badge" hidden>📊 공공데이터 반영</span>
           <h2>AI가 상황을 분석했어요</h2>
           <div class="chips" id="input-summary"></div>
         </div>
@@ -244,6 +286,7 @@
             <span class="card-label">한눈에 보기</span>
             <p id="analysis-summary"></p>
             <ul class="problem-list" id="analysis-problems"></ul>
+            <p class="data-insight" id="data-insight" hidden></p>
           </div>
           <div class="card urgent-card">
             <span class="card-label">가장 급한 일</span>

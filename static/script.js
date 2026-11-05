@@ -280,11 +280,13 @@ async function runAnalyze(input) {
   state.result = { analysis: res.data.analysis, strategies: res.data.strategies };
   state.resultDemo = false;
   state.resultSeconds = res.data.seconds || 0;
+  $("#data-badge").hidden = !res.data.data_used;
   renderResult();
   showView("result");
 }
 
 async function showDemoResult(input) {
+  $("#data-badge").hidden = true;
   const demo = await getDemo();
   state.input = input;
   state.result = { analysis: demo.analysis, strategies: demo.strategies };
@@ -319,6 +321,8 @@ function renderResult() {
 
   $("#analysis-summary").textContent = analysis.summary;
   $("#analysis-problems").innerHTML = list(analysis.problems);
+  $("#data-insight").hidden = !analysis.data_insight;
+  $("#data-insight").textContent = analysis.data_insight ? `📊 데이터로 보면: ${analysis.data_insight}` : "";
   $("#urgent-title").textContent = analysis.urgent?.title || "";
   $("#urgent-reason").textContent = analysis.urgent?.reason || "";
 
@@ -612,6 +616,8 @@ document.addEventListener("click", async (e) => {
   switch (btn.dataset.action) {
     case "go-landing":      showView("landing"); break;
     case "start":           showView("input"); break;
+    case "risk":            openRisk(); break;
+    case "risk-recover":    riskToRecover(); break;
     case "demo-start":      showView("input"); await fillExample(); break;
     case "fill-example":    await fillExample(); break;
     case "select-strategy": await selectStrategy(btn.dataset.id); break;
@@ -670,3 +676,76 @@ async function installApp() {
 window.addEventListener("appinstalled", () => {
   $$(".install-btn").forEach((b) => (b.hidden = true));
 });
+
+// =========================================================
+// 출발 전 지연 위험 체크 (공공데이터 분석 · AI 호출 없음)
+// =========================================================
+let lastRisk = null;
+
+function openRisk() {
+  const dateInput = $("#risk-form").elements.date;
+  if (!dateInput.value) dateInput.value = new Date().toISOString().slice(0, 10);
+  $("#risk-result").hidden = true;
+  showView("risk");
+}
+
+const RISK_CLASS = { 낮음: "level-low", 보통: "level-mid", 높음: "level-high" };
+
+$("#risk-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const body = Object.fromEntries(["flight", "airport", "route", "date", "time"].map((k) => [k, (f.get(k) || "").trim()]));
+  if (!body.time) return toast("출발 시간을 입력해 주세요");
+
+  let res;
+  try {
+    res = await postJSON("/api/risk", body);
+  } catch {
+    return toast("서버에 연결할 수 없어요");
+  }
+  if (!res.ok) return toast(res.data.error || "다시 시도해 주세요");
+  lastRisk = { ...res.data, time: body.time };
+  renderRisk(res.data);
+});
+
+function renderRisk(r) {
+  const where = r.airport === "기타" ? "인천 · 해외" : `${r.airport}공항`;
+  const title = r.flight ? `${esc(r.flight)}${r.airline ? ` <span>${esc(r.airline)}</span>` : ""}` : "내 비행기";
+  $("#risk-result").innerHTML = `
+    <div class="risk-head">
+      <div>
+        <small>${esc(where)} · ${esc(r.route)}선 · ${r.month}월 ${r.hour}시</small>
+        <h3>${title}</h3>
+      </div>
+      <div class="risk-verdict ${RISK_CLASS[r.level]}"><small>지연 위험</small><b>${esc(r.level)}</b></div>
+    </div>
+    ${r.airport_note ? `<p class="risk-note">${esc(r.airport_note)}</p>` : ""}
+    <div class="risk-tiles">
+      ${r.factors.map((x) => `
+        <div class="risk-tile ${RISK_CLASS[x.level]}">
+          <small>${esc(x.label)}</small>
+          <b>${esc(x.value)}</b>
+          <span>${esc(x.compare)}</span>
+        </div>`).join("")}
+    </div>
+    <ul class="risk-tips">${r.tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+    <button class="btn btn-secondary btn-block" data-action="risk-recover">문제가 생겼나요? 바로 복구 계획 만들기 →</button>
+    <p class="risk-source">한국공항공사 공공데이터 · 과거 통계 기반 추정${r.cancel_rate !== undefined ? ` · 이 공항 결항률 ${r.cancel_rate}%` : ""}</p>`;
+  $("#risk-result").hidden = false;
+  $("#risk-result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// 위험 체크 → 복구 입력으로 이어서 (항공 문제·출발 공항·시간 자동 입력)
+function riskToRecover() {
+  const form = $("#trip-form");
+  form.reset();
+  clearAllErrors();
+  form.elements.problem_type.forEach((r) => (r.checked = r.value === "항공 문제"));
+  if (lastRisk) {
+    form.elements.location.value = lastRisk.airport === "기타" ? "" : `${lastRisk.airport}공항`;
+    form.elements.departure_time.value = lastRisk.time;
+    if (lastRisk.flight) form.elements.situation.value = `${lastRisk.flight} 편에 문제가 생겼어요. `;
+  }
+  showView("input");
+  toast("항공 문제로 입력을 시작해요");
+}
