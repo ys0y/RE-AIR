@@ -273,7 +273,7 @@ def health():
     """서버가 잘 켜졌는지, API 키가 설정되었는지 확인하는 용도입니다."""
     return jsonify({
         "status": "ok",
-        "api_key_set": bool(os.getenv("AI_API_KEY")),  # 키 값 자체는 절대 보내지 않음
+        **ai_client.key_diagnosis(),  # 키 값 자체는 절대 보내지 않음 (길이·형식만)
         "model": ai_client.get_config()["model"],
     })
 

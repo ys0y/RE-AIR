@@ -27,10 +27,33 @@ class AIError(Exception):
         self.code = code
 
 
+def clean_key(raw):
+    """
+    API 키를 붙여 넣을 때 자주 하는 실수를 자동으로 정리합니다.
+    - 앞뒤 공백/줄바꿈, 따옴표("..." '...') 제거
+    - 'AI_API_KEY=baze_...' 처럼 이름까지 붙여 넣은 경우 이름 부분 제거
+    """
+    key = (raw or "").strip().strip('"').strip("'").strip()
+    if key.upper().startswith("AI_API_KEY="):
+        key = key.split("=", 1)[1].strip().strip('"').strip("'").strip()
+    return key
+
+
+def key_diagnosis():
+    """키 값은 숨기고 '형식이 맞는지'만 알려 줍니다. (배포 서버 문제 찾기용)"""
+    key = clean_key(os.getenv("AI_API_KEY", ""))
+    return {
+        "api_key_set": bool(key),
+        "key_length": len(key),               # 정상: 43
+        "key_starts_with_baze": key.startswith("baze_"),
+        "key_has_space": any(c.isspace() for c in key),
+    }
+
+
 def get_config():
     """환경변수에서 접속 정보를 읽습니다."""
     return {
-        "api_key": os.getenv("AI_API_KEY", "").strip(),
+        "api_key": clean_key(os.getenv("AI_API_KEY", "")),
         "base_url": os.getenv("AI_BASE_URL", DEFAULT_BASE_URL).strip().rstrip("/"),
         "model": os.getenv("AI_MODEL", DEFAULT_MODEL).strip(),
     }
