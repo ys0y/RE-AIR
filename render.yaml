@@ -1,0 +1,18 @@
+# Render 배포 설정 (render.com → New → Blueprint 에서 이 파일을 읽습니다)
+services:
+  - type: web
+    name: re-air
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # 과다 사용 방지 기록을 한곳에서 관리하도록 프로세스 1개 + 스레드 4개로 실행
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.2
+      - key: AI_API_KEY
+        sync: false          # 비밀값: Render 화면에서 직접 입력
+      - key: AI_BASE_URL
+        value: https://factchat-cloud.mindlogic.ai/v1/gateway
+      - key: AI_MODEL
+        value: claude-sonnet-5-5

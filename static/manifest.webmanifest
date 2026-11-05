@@ -1,0 +1,16 @@
+{
+  "name": "RE:AIR · AI 여행 복구 플래너",
+  "short_name": "RE:AIR",
+  "description": "항공편이 멈춰도, 당신의 여행은 멈추지 않도록. 생성형 AI가 만드는 여행 복구 계획.",
+  "lang": "ko",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef6ff",
+  "theme_color": "#0b1f3a",
+  "icons": [
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
