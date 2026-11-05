@@ -121,8 +121,12 @@ function collectInput() {
   };
 }
 
+let exampleIndex = 0;
 async function fillExample() {
-  const ex = (await getDemo()).example_input;
+  const demo = await getDemo();
+  const examples = demo.examples || [demo.example_input];
+  const ex = examples[exampleIndex % examples.length];
+  exampleIndex++;
   const form = $("#trip-form");
   for (const [key, value] of Object.entries(ex)) {
     const fields = form.elements[key];
@@ -134,15 +138,14 @@ async function fillExample() {
     }
   }
   clearAllErrors();
-  toast("예시 상황을 입력했어요");
+  toast(`예시 ${((exampleIndex - 1) % examples.length) + 1}/${examples.length}: ${ex.title || "예시 상황"}`);
 }
 
 // ---------- 입력값 검사 (STEP 4) ----------
 const RULES = [
   { name: "problem_type",   message: "문제 유형을 선택해 주세요." },
   { name: "location",       message: "현재 위치를 입력해 주세요." },
-  { name: "destination",    message: "목적지를 입력해 주세요." },
-  { name: "departure_time", message: "출발 예정 시간을 입력해 주세요." },
+  { name: "destination",    message: "다음 목적지를 입력해 주세요." },
   { name: "situation",      message: "지금 상황을 적어 주세요.", min: 15 },
   { name: "priority",       message: "가장 중요한 조건을 골라 주세요." },
 ];
@@ -309,7 +312,7 @@ function renderResult() {
   $("#input-summary").innerHTML = [
     `<span class="chip chip-red">${esc(input.problem_type)}</span>`,
     `<span class="chip"><b>경로</b>${esc(input.location)} → ${esc(input.destination)}</span>`,
-    `<span class="chip"><b>출발 예정</b>${esc(input.departure_time)}</span>`,
+    input.departure_time ? `<span class="chip"><b>관련 시간</b>${esc(input.departure_time)}</span>` : "",
     `<span class="chip"><b>예산</b>${esc(input.budget)}</span>`,
     `<span class="chip"><b>우선순위</b>${esc(input.priority)}</span>`,
   ].join("");
@@ -338,7 +341,7 @@ function renderResult() {
         <p class="desc">${esc(s.description)}</p>
         ${s.recommended && s.fit_reason ? `<p class="fit">${esc(s.fit_reason)}</p>` : ""}
         <div class="meters">
-          ${meter("비용 부담", s.cost_level)}${meter("귀국 속도", s.speed_level)}${meter("일정 유지", s.keep_level)}
+          ${meter("비용 부담", s.cost_level)}${meter("해결 속도", s.speed_level)}${meter("일정 유지", s.keep_level)}
         </div>
         <div class="s-section s-actions"><h5>이렇게 하면 돼요</h5><ul>${list(s.actions)}</ul></div>
         <details class="more">
@@ -440,29 +443,42 @@ function renderPlan() {
 // =========================================================
 // 화면 5: 문의 메시지 + 체크리스트
 // =========================================================
-const LANGS = [
-  { key: "ko", label: "한국어" },
-  { key: "en", label: "English" },
-  { key: "ja", label: "日本語" },
-];
+// 문의문 언어 탭: 한국어 / English / 현지어(AI가 위치를 보고 자동 선택)
+// (예전 시연용 데이터의 ja 항목도 현지어로 처리)
+function messageLangs(m) {
+  const local = m.local || m.ja || "";
+  const localLang = m.local_lang || (m.ja ? "日本語" : "");
+  const langs = [{ key: "ko", label: "한국어" }, { key: "en", label: "English" }];
+  if (local && local !== m.en && local !== m.ko) langs.push({ key: "local", label: localLang || "현지어" });
+  return langs;
+}
+
+function messageText(m, lang) {
+  if (lang === "local") return m.local || m.ja || "";
+  return m[lang] || "";
+}
 
 function renderAction() {
   const { messages, checklist } = state.plan;
   $("#action-strategy-pill").innerHTML = strategyPill();
 
   $("#message-list").innerHTML = (messages || [])
-    .map((m, idx) => `
-      <article class="card message" data-msg="${idx}" data-lang="en">
+    .map((m, idx) => {
+      const langs = messageLangs(m);
+      const first = langs[langs.length - 1].key; // 현지어가 있으면 현지어부터, 없으면 English
+      return `
+      <article class="card message" data-msg="${idx}" data-lang="${first}">
         <div class="message-head"><small>To. ${esc(m.target)}</small><h4>${esc(m.purpose)}</h4></div>
         <div class="lang-tabs">
-          ${LANGS.map((l) => `<button class="lang-tab ${l.key === "en" ? "active" : ""}" data-action="lang" data-lang="${l.key}">${l.label}</button>`).join("")}
+          ${langs.map((l) => `<button class="lang-tab ${l.key === first ? "active" : ""}" data-action="lang" data-lang="${l.key}">${esc(l.label)}</button>`).join("")}
         </div>
-        <div class="message-body">${esc(m.en)}</div>
+        <div class="message-body">${esc(messageText(m, first))}</div>
         <div class="message-foot">
           <button class="btn btn-soft btn-sm" data-action="big">크게 보기</button>
           <button class="btn btn-soft btn-sm" data-action="copy">복사</button>
         </div>
-      </article>`)
+      </article>`;
+    })
     .join("");
 
   const WHEN_CLASS = { "지금 즉시": "when-now", "1시간 이내": "when-hour" };
@@ -494,7 +510,7 @@ function updateProgress() {
 function switchLang(card, lang) {
   const m = state.plan.messages[Number(card.dataset.msg)];
   card.dataset.lang = lang;
-  $(".message-body", card).textContent = m[lang] || "";
+  $(".message-body", card).textContent = messageText(m, lang);
   $$(".lang-tab", card).forEach((t) => t.classList.toggle("active", t.dataset.lang === lang));
 }
 
@@ -522,7 +538,7 @@ function showBig(card) {
   const m = state.plan.messages[Number(card.dataset.msg)];
   $("#big-target").textContent = `To. ${m.target}`;
   $("#big-text").textContent = $(".message-body", card).textContent;
-  $("#big-text").lang = card.dataset.lang; // 일본어 줄바꿈 처리용
+  $("#big-text").dataset.lang = card.dataset.lang; // 현지어(띄어쓰기 없는 언어) 줄바꿈 처리용
   $("#big-view").hidden = false;
 }
 
@@ -554,7 +570,7 @@ function buildPlanText() {
     ...plan.checklist.map((c) => `${c.priority}. (${c.when}) ${c.task}`),
     ``,
     `■ 문의 메시지`,
-    ...plan.messages.flatMap((m) => [`▷ ${m.target} - ${m.purpose}`, `KO: ${m.ko}`, `EN: ${m.en}`, `JA: ${m.ja}`, ``]),
+    ...plan.messages.flatMap((m) => [`▷ ${m.target} - ${m.purpose}`, `KO: ${m.ko}`, `EN: ${m.en}`, ...(messageLangs(m).length > 2 ? [`${messageLangs(m)[2].label}: ${messageText(m, "local")}`] : []), ``]),
     `※ AI 제안이에요. 실제 항공편·숙소 정보는 직접 확인해 주세요.`,
   ];
   return lines.join("\n");

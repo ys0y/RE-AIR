@@ -325,7 +325,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .lang-tab { border: 0; background: transparent; color: var(--g600); border-radius: 9px; padding: 7px 16px; font-size: 14px; font-weight: 700; }
 .lang-tab.active { background: #fff; color: var(--g900); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
 .message-body { margin-top: 14px; padding: 18px; background: var(--g50); border-radius: 16px; font-size: 16px; line-height: 1.7; white-space: pre-wrap; min-height: 90px; }
-.message[data-lang="ja"] .message-body { word-break: normal; line-break: strict; } /* 일본어는 띄어쓰기가 없어 일반 줄바꿈 사용 */
+.message[data-lang="local"] .message-body { word-break: normal; line-break: strict; } /* 일본어는 띄어쓰기가 없어 일반 줄바꿈 사용 */
 .message-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
 
 .checklist-card { position: sticky; top: 140px; padding: 24px; }
@@ -515,7 +515,7 @@ h2 .ai-badge { margin: 0 0 0 8px; position: relative; top: -3px; }
 .big-box { background: #fff; border-radius: 28px; padding: 36px; width: min(760px, 100%); max-height: 90vh; overflow: auto; }
 .big-box small { display: block; font-size: 16px; font-weight: 700; color: var(--g500); margin-bottom: 14px; }
 .big-box p { font-size: clamp(24px, 3.2vw, 34px); font-weight: 700; line-height: 1.55; color: var(--g900); margin-bottom: 28px; white-space: pre-wrap; }
-.big-box p:lang(ja) { word-break: normal; line-break: strict; }
+.big-box p[data-lang="local"] { word-break: normal; line-break: strict; }
 
 /* 앱 설치 버튼 (헤더) */
 .header .install-btn ~ .btn { margin-left: 0; }   /* 설치 버튼 뒤의 버튼은 바로 옆에 붙이기 */
@@ -535,3 +535,13 @@ body:not([data-view="landing"]) .header .install-btn { margin-left: auto; }
   .install-btn { display: none !important; }      /* 이미 설치된 앱에서는 설치 버튼 숨김 */
   .stepper-wrap { top: calc(60px + env(safe-area-inset-top)); }
 }
+
+/* 문제 유형 7가지 */
+.choice-grid.types { grid-template-columns: repeat(4, 1fr); }
+.choice-grid.types .choice span { flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 16px; }
+.choice-grid.types .choice small { font-size: 12px; color: var(--g500); }
+.optional { font-size: 14px; font-weight: 500; color: var(--g500); }
+@media (max-width: 680px) { .choice-grid.types { grid-template-columns: 1fr 1fr; } }
+/* 앱 화면의 '새로 입력' 버튼은 항상 오른쪽 끝 */
+.header .app-only { margin-left: auto !important; }
+.header .install-btn:not([hidden]) + .landing-only + .app-only { margin-left: 0 !important; }

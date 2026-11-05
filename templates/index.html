@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>RE:AIR · 멈춘 여행을 다시 띄우는 AI 플래너</title>
-  <meta name="description" content="항공편이 멈춰도, 당신의 여행은 멈추지 않도록. 생성형 AI가 만드는 개인 맞춤형 여행 복구 계획.">
+  <meta name="description" content="계획이 멈춰도, 당신의 여행은 멈추지 않도록. 여행 중 돌발 상황을 생성형 AI가 다시 설계합니다.">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <!-- 앱 설치(PWA) 정보 -->
@@ -60,8 +60,8 @@
         <div class="container hero-inner">
           <div class="hero-text">
             <span class="eyebrow">RE:AIR · AI 여행 복구 플래너</span>
-            <h1>항공편이 멈춰도,<br><em>당신의 여행은</em><br>멈추지 않도록.</h1>
-            <p class="hero-sub">결항 · 지연 · 환승 실패,<br>AI가 여행을 다시 설계해 드려요.</p>
+            <h1>계획이 멈춰도,<br><em>당신의 여행은</em><br>멈추지 않도록.</h1>
+            <p class="hero-sub">결항 · 날씨 · 분실 · 교통 문제까지,<br>틀어진 여행을 AI가 다시 설계해 드려요.</p>
             <div class="hero-cta">
               <button class="btn btn-primary btn-lg" data-action="start">내 여행 복구하기</button>
               <button class="btn btn-secondary btn-lg" data-action="demo-start">예시로 체험하기</button>
@@ -81,7 +81,7 @@
             <div class="mock-card mock-result">
               <div class="mock-title">복구 전략 3가지가 준비됐어요</div>
               <div class="mock-plan"><span class="tag tag-a">A</span>비용 최소화 <em>추천</em></div>
-              <div class="mock-plan"><span class="tag tag-b">B</span>빠른 귀국</div>
+              <div class="mock-plan"><span class="tag tag-b">B</span>빠른 해결</div>
               <div class="mock-plan"><span class="tag tag-c">C</span>기존 일정 유지</div>
             </div>
           </div>
@@ -91,24 +91,26 @@
       <!-- 문제 정의 -->
       <section class="section" id="problem">
         <div class="container">
-          <h2 class="section-title">항공편 하나가 멈추면,<br><em>여행 전체가</em> 무너져요.</h2>
+          <h2 class="section-title">여행은 계획대로 되지 않아요.<br>하나가 틀어지면 <em>전부</em> 흔들려요.</h2>
           <div class="chain">
             <div class="chain-item chain-start">✈ 결항</div>
+            <div class="chain-item chain-start">🌧 비</div>
+            <div class="chain-item chain-start">🎒 분실</div>
+            <div class="chain-item chain-start">🚆 기차 놓침</div>
             <span class="chain-arrow">→</span>
+            <div class="chain-item">🗓 일정</div>
             <div class="chain-item">🏨 숙소</div>
-            <div class="chain-item">🚆 교통</div>
-            <div class="chain-item">💼 출근</div>
-            <div class="chain-item">🌐 외국어 문의</div>
+            <div class="chain-item">🌐 현지어 문의</div>
             <div class="chain-item">💸 추가 비용</div>
           </div>
           <div class="compare">
             <div class="compare-card">
-              <h3>기존 안내</h3>
-              <p>항공편 정보만 알려 줘요</p>
+              <h3>기존 서비스</h3>
+              <p>항공 · 숙소 · 교통이 따로따로</p>
             </div>
             <div class="compare-card compare-ours">
               <h3>RE:AIR</h3>
-              <p>복구 계획을 만들어 줘요</p>
+              <p>한 번에 다시 설계해 줘요</p>
             </div>
           </div>
         </div>
@@ -122,7 +124,7 @@
             <article class="feature"><div class="feature-icon">🔍</div><h3>상황 분석</h3><p>가장 급한 일부터</p></article>
             <article class="feature"><div class="feature-icon">🧭</div><h3>복구 전략 3가지</h3><p>비용 · 속도 · 일정</p></article>
             <article class="feature"><div class="feature-icon">🗓</div><h3>새 일정표</h3><p>기존과 비교해서</p></article>
-            <article class="feature"><div class="feature-icon">🌐</div><h3>3개 국어 문의문</h3><p>한국어 · English · 日本語</p></article>
+            <article class="feature"><div class="feature-icon">🌐</div><h3>현지어 문의문</h3><p>위치에 맞춰 자동 선택</p></article>
             <article class="feature"><div class="feature-icon">✅</div><h3>행동 체크리스트</h3><p>우선순위대로</p></article>
             <article class="feature"><div class="feature-icon">🛡</div><h3>안전한 안내</h3><p>불확실한 정보는 '확인 필요'</p></article>
           </div>
@@ -136,7 +138,7 @@
       <footer class="footer">
         <div class="container">
           <b>RE:AIR</b> · 한양여자대학교 NEXT AI 해커톤<br>
-          <small>AI 안내는 참고용이에요. 실제 항공편 · 숙소 정보는 직접 확인해 주세요.</small>
+          <small>AI 안내는 참고용이에요. 실제 운항 · 예약 · 운영 정보는 직접 확인해 주세요.</small>
         </div>
       </footer>
     </section>
@@ -154,10 +156,14 @@
           <!-- 문제 유형 -->
           <fieldset class="field">
             <legend>어떤 문제가 생겼나요?</legend>
-            <div class="choice-grid three">
-              <label class="choice"><input type="radio" name="problem_type" value="항공편 결항" required><span>🚫<b>항공편 결항</b></span></label>
-              <label class="choice"><input type="radio" name="problem_type" value="항공편 지연"><span>⏰<b>항공편 지연</b></span></label>
-              <label class="choice"><input type="radio" name="problem_type" value="환승 실패"><span>🔁<b>환승 실패</b></span></label>
+            <div class="choice-grid types">
+              <label class="choice"><input type="radio" name="problem_type" value="항공 문제" required><span>✈️<b>항공</b><small>결항 · 지연 · 환승</small></span></label>
+              <label class="choice"><input type="radio" name="problem_type" value="교통 문제"><span>🚆<b>교통</b><small>기차 · 버스 · 파업</small></span></label>
+              <label class="choice"><input type="radio" name="problem_type" value="숙소 문제"><span>🏨<b>숙소</b><small>예약 · 오버부킹</small></span></label>
+              <label class="choice"><input type="radio" name="problem_type" value="날씨·휴관"><span>🌧<b>날씨 · 휴관</b><small>일정 취소</small></span></label>
+              <label class="choice"><input type="radio" name="problem_type" value="분실·도난"><span>🎒<b>분실 · 도난</b><small>여권 · 지갑</small></span></label>
+              <label class="choice"><input type="radio" name="problem_type" value="건강 문제"><span>🤒<b>건강</b><small>아픔 · 부상</small></span></label>
+              <label class="choice"><input type="radio" name="problem_type" value="기타"><span>✏️<b>기타</b><small>직접 설명</small></span></label>
             </div>
           </fieldset>
 
@@ -167,25 +173,24 @@
               <input type="text" name="location" maxlength="100" placeholder="예) 일본 오사카 (난바 숙소)" required>
             </label>
             <label class="field">
-              <span class="label">어디로 가야 하나요?</span>
-              <input type="text" name="destination" maxlength="100" placeholder="예) 대한민국 서울 (인천공항)" required>
+              <span class="label">다음 목적지는요?</span>
+              <input type="text" name="destination" maxlength="100" placeholder="예) 교토 숙소 / 인천공항" required>
             </label>
           </div>
 
           <div class="field-row">
             <label class="field">
-              <span class="label">원래 몇 시 출발이었나요?</span>
-              <input type="time" name="departure_time" required>
+              <span class="label">관련된 시간 <small class="optional">(선택)</small></span>
+              <input type="time" name="departure_time">
             </label>
             <label class="field">
-              <span class="label">출발까지 얼마나 남았나요?</span>
+              <span class="label">얼마나 급한가요?</span>
               <select name="remaining_time">
-                <option value="이미 지남">이미 지났어요</option>
-                <option value="1시간 이내">1시간 이내</option>
-                <option value="약 2~3시간">약 2~3시간</option>
-                <option value="약 5시간" selected>약 5시간</option>
-                <option value="반나절 이상">반나절 이상</option>
-                <option value="하루 이상">하루 이상</option>
+                <option value="지금 당장 (1시간 이내)">지금 당장 (1시간 이내)</option>
+                <option value="몇 시간 안에" selected>몇 시간 안에</option>
+                <option value="오늘 안에">오늘 안에</option>
+                <option value="내일 이후">내일 이후</option>
+                <option value="잘 모르겠음">잘 모르겠어요</option>
               </select>
             </label>
           </div>
@@ -193,7 +198,7 @@
           <label class="field">
             <span class="label">지금 상황을 자유롭게 알려 주세요</span>
             <textarea name="situation" rows="5" maxlength="1000" required
-              placeholder="예) 일본 여행 마지막 날인데 귀국 항공편이 결항됐어요. 내일 오전 출근해야 하고 숙소는 오늘까지만 예약했어요."></textarea>
+              placeholder="예) 파리 여행 3일째인데 비가 많이 와요. 오후에 에펠탑 산책이랑 유람선을 타려고 했고, 저녁 7시에 식당 예약이 있어요."></textarea>
           </label>
 
           <label class="field">
@@ -210,7 +215,7 @@
             <legend>무엇이 가장 중요한가요?</legend>
             <div class="choice-grid four">
               <label class="choice"><input type="radio" name="priority" value="비용 최소화" required><span>💰<b>비용 최소화</b></span></label>
-              <label class="choice"><input type="radio" name="priority" value="빠른 귀국"><span>⚡<b>빠른 귀국</b></span></label>
+              <label class="choice"><input type="radio" name="priority" value="빠른 해결"><span>⚡<b>빠른 해결</b></span></label>
               <label class="choice"><input type="radio" name="priority" value="기존 일정 유지"><span>🗓<b>기존 일정 유지</b></span></label>
               <label class="choice"><input type="radio" name="priority" value="편안함과 안전"><span>🛌<b>편안함 · 안전</b></span></label>
             </div>

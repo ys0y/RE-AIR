@@ -32,15 +32,14 @@ FIELDS = [
 REQUIRED_MESSAGES = {
     "problem_type": "문제 유형을 선택해 주세요.",
     "location": "현재 위치를 입력해 주세요.",
-    "destination": "목적지를 입력해 주세요.",
-    "departure_time": "출발 예정 시간을 입력해 주세요.",
+    "destination": "다음 목적지를 입력해 주세요.",
     "situation": "지금 상황을 적어 주세요.",
     "priority": "가장 중요한 조건을 골라 주세요.",
 }
 
 ALLOWED_VALUES = {
-    "problem_type": {"항공편 결항", "항공편 지연", "환승 실패"},
-    "priority": {"비용 최소화", "빠른 귀국", "기존 일정 유지", "편안함과 안전"},
+    "problem_type": {"항공 문제", "교통 문제", "숙소 문제", "날씨·휴관", "분실·도난", "건강 문제", "기타"},
+    "priority": {"비용 최소화", "빠른 해결", "기존 일정 유지", "편안함과 안전"},
 }
 
 MAX_LENGTH = {"location": 100, "destination": 100, "situation": 1000}
@@ -157,7 +156,7 @@ def normalize_analysis(data, priority):
             raise ai_client.AIError("AI 결과가 완전하지 않아요. 다시 시도해 주세요.", "bad_json")
         clean_strategies.append({
             "id": "ABC"[index],  # 순서대로 A, B, C로 고정
-            "label": _text(s.get("label"), ["비용 최소화", "빠른 귀국", "기존 일정 유지"][index]),
+            "label": _text(s.get("label"), ["비용 최소화", "빠른 해결", "기존 일정 유지"][index]),
             "title": _text(s.get("title")),
             "description": _text(s.get("description")),
             "pros": _text_list(s.get("pros"), 3),
@@ -204,7 +203,8 @@ def normalize_plan(data):
             "purpose": _text(m.get("purpose")),
             "ko": _text(m.get("ko")),
             "en": _text(m.get("en")),
-            "ja": _text(m.get("ja")),
+            "local_lang": _text(m.get("local_lang"), "English")[:20],
+            "local": _text(m.get("local")) or _text(m.get("en")),
         }
         for m in (data.get("messages") or []) if isinstance(m, dict) and _text(m.get("ko"))
     ][:3]
