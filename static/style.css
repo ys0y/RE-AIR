@@ -83,7 +83,7 @@ em { font-style: normal; color: var(--primary); }
 .header-inner { display: flex; align-items: center; gap: 24px; height: 60px; }
 .logo { display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -.02em; }
 .logo b { color: var(--sky-text); }
-.logo-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--navy); color: var(--sky); font-size: 14px; }
+.logo-mark { display: block; width: 30px; height: 30px; border-radius: 9px; }
 .nav-links { display: flex; gap: 24px; margin-left: auto; }
 .nav-links a { color: var(--g600); text-decoration: none; font-weight: 600; font-size: 15px; }
 .nav-links a:hover { color: var(--g900); }

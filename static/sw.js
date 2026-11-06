@@ -4,7 +4,7 @@
    - 인터넷이 끊기면 저장된 화면을 보여 줍니다.
    - AI 요청(/api/...)은 저장하지 않고 항상 서버로 보냅니다.
    ========================================================= */
-const CACHE = "reair-v1";
+const CACHE = "reair-v2";
 const APP_FILES = [
   "/",
   "/static/style.css",

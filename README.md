@@ -1,3 +1,5 @@
+<p align="center"><img src="static/icons/icon-192.png" alt="RE:AIR 아이콘" width="110"></p>
+
 # RE:AIR ✈️
 
 > **계획이 멈춰도, 당신의 여행은 멈추지 않도록.**
